@@ -13,13 +13,5 @@
 			</array>
 		</dict>
 	</array>
-	<key>SUFeedURL</key>
-	<string>https://cdn.jsdelivr.net/gh/285878535/rightPlus@main/appcast.xml</string>
-	<key>SUPublicEDKey</key>
-	<string>TgGfupYOCiFc0mDnXV1hOytpz2s3zDRM2spCNqtLm4Q=</string>
-	<key>SUEnableAutomaticChecks</key>
-	<true/>
-	<key>SUScheduledCheckInterval</key>
-	<integer>86400</integer>
 </dict>
 </plist>

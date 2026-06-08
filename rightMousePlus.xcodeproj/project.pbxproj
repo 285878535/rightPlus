@@ -11,7 +11,6 @@
 		DD000000000000000000000E /* FinderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000001 /* FinderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DD0000000000000000000021 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000020 /* SharedConfig.swift */; };
 		DD0000000000000000000022 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000020 /* SharedConfig.swift */; };
-		EE0000000000000000000003 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = EE0000000000000000000002 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,7 +59,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE0000000000000000000003 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,9 +130,6 @@
 				910ADB652FD69765001699D6 /* rightMousePlus */,
 			);
 			name = rightMousePlus;
-			packageProductDependencies = (
-				EE0000000000000000000002 /* Sparkle */,
-			);
 			productName = rightMousePlus;
 			productReference = 910ADB632FD69765001699D6 /* RightPlus.app */;
 			productType = "com.apple.product-type.application";
@@ -185,9 +180,6 @@
 			);
 			mainGroup = 910ADB5A2FD69765001699D6;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 910ADB642FD69765001699D6 /* Products */;
 			projectDirPath = "";
@@ -299,7 +291,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -357,7 +349,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -447,7 +439,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					FinderSync,
@@ -475,7 +467,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					FinderSync,
@@ -520,25 +512,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sparkle-project/Sparkle";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		EE0000000000000000000002 /* Sparkle */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
-			productName = Sparkle;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 910ADB5B2FD69765001699D6 /* Project object */;
 }

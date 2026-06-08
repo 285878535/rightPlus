@@ -69,7 +69,7 @@ struct NewFileSettingsView: View {
                 .padding()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .onChange(of: config) { _, newValue in ConfigStore.save(newValue) }
+        .onChange(of: config) { newValue in ConfigStore.save(newValue) }
         .onAppear {
             seedWPSTemplates()
             if let url = SharedStore.configURL, !FileManager.default.fileExists(atPath: url.path) {
@@ -272,7 +272,7 @@ struct GeneralSettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(6)
             }
-            .onChange(of: config) { _, newValue in ConfigStore.save(newValue) }
+            .onChange(of: config) { newValue in ConfigStore.save(newValue) }
 
             GroupBox {
                 VStack(alignment: .leading, spacing: 10) {
@@ -296,7 +296,7 @@ struct GeneralSettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("外观", systemImage: "menubar.rectangle").font(.headline)
                     Toggle("在 Dock 中隐藏（仅状态栏显示）", isOn: $hideDock)
-                        .onChange(of: hideDock) { _, hide in
+                        .onChange(of: hideDock) { hide in
                             AppDelegate.applyDockPolicy(hide: hide)
                         }
                     Text("开启后 Dock 不显示图标，可从右上角状态栏菜单打开本窗口。")
