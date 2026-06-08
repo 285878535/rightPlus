@@ -11,6 +11,7 @@
 		DD000000000000000000000E /* FinderExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000001 /* FinderExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DD0000000000000000000021 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000020 /* SharedConfig.swift */; };
 		DD0000000000000000000022 /* SharedConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0000000000000000000020 /* SharedConfig.swift */; };
+		EE0000000000000000000003 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = EE0000000000000000000002 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE0000000000000000000003 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,7 @@
 			);
 			name = rightMousePlus;
 			packageProductDependencies = (
+				EE0000000000000000000002 /* Sparkle */,
 			);
 			productName = rightMousePlus;
 			productReference = 910ADB632FD69765001699D6 /* RightPlus.app */;
@@ -182,6 +185,9 @@
 			);
 			mainGroup = 910ADB5A2FD69765001699D6;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 910ADB642FD69765001699D6 /* Products */;
 			projectDirPath = "";
@@ -514,6 +520,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE0000000000000000000002 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE0000000000000000000001 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 910ADB5B2FD69765001699D6 /* Project object */;
 }

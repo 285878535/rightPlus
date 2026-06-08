@@ -8,19 +8,19 @@ import SwiftUI
 @main
 struct rightMousePlusApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @StateObject private var updater = UpdateChecker()
+    @StateObject private var appUpdater = AppUpdater()
 
     var body: some Scene {
         Window("RightPlus", id: "main") {
             ContentView()
-                .environmentObject(updater)
+                .environmentObject(appUpdater)
         }
         .defaultSize(width: 860, height: 600)
         .windowResizability(.contentMinSize)
 
         MenuBarExtra("RightPlus", systemImage: "cursorarrow.click.2") {
             MenuBarContent()
-                .environmentObject(updater)
+                .environmentObject(appUpdater)
         }
     }
 }
@@ -59,12 +59,13 @@ enum AirDropService {
 // MARK: - 状态栏菜单
 
 struct MenuBarContent: View {
-    @EnvironmentObject private var updater: UpdateChecker
+    @EnvironmentObject private var appUpdater: AppUpdater
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         Button("打开 RightPlus") { showMain() }
-        Button("检查更新…") { updater.check(manual: true); showMain() }
+        Button("检查更新…") { appUpdater.checkForUpdates() }
+            .disabled(!appUpdater.canCheck)
         Divider()
         Button("退出 RightPlus") { NSApplication.shared.terminate(nil) }
     }

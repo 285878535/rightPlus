@@ -31,7 +31,6 @@ enum SidebarItem: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @State private var selection: SidebarItem? = .newFile
-    @EnvironmentObject private var updater: UpdateChecker
     @AppStorage("didOnboard") private var didOnboard = false
     @State private var showOnboarding = false
 
@@ -67,20 +66,10 @@ struct ContentView: View {
         .frame(minWidth: 780, minHeight: 560)
         .onOpenURL { AirDropService.handle($0) }
         .onAppear {
-            updater.check()
             if !didOnboard { showOnboarding = true }
         }
         .sheet(isPresented: $showOnboarding) {
             OnboardingSheet { didOnboard = true }
-        }
-        .sheet(item: $updater.available) { release in
-            UpdateSheet(
-                release: release,
-                currentVersion: updater.currentVersion,
-                onDownload: { updater.download(release) },
-                onSkip: { updater.skip(release) },
-                onLater: { updater.dismiss() }
-            )
         }
     }
 
@@ -104,5 +93,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .environmentObject(UpdateChecker())
+        .environmentObject(AppUpdater())
 }

@@ -328,10 +328,14 @@ struct GeneralSettingsView: View {
 // MARK: - 关于
 
 struct AboutView: View {
-    @EnvironmentObject private var updater: UpdateChecker
+    @EnvironmentObject private var appUpdater: AppUpdater
+
+    private var version: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
 
     private let features = [
-        "新建文件（可自定义类型与模板）", "剪切 / 复制 / 粘贴", "在终端中打开",
+        "新建文件（可自定义类型与模板）", "剪切 / 复制 / 粘贴", "在终端中打开", "隔空投送",
     ]
 
     var body: some View {
@@ -341,7 +345,7 @@ struct AboutView: View {
                 .foregroundStyle(.tint)
                 .padding(.top, 20)
             Text("RightPlus").font(.largeTitle).bold()
-            Text("增强 macOS 右键菜单 · v\(updater.currentVersion)").foregroundStyle(.secondary)
+            Text("增强 macOS 右键菜单 · v\(version)").foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(features, id: \.self) { f in
@@ -351,23 +355,12 @@ struct AboutView: View {
             }
             .padding(.top, 8)
 
-            VStack(spacing: 6) {
-                Button { updater.check(manual: true) } label: {
-                    if updater.checking {
-                        ProgressView().controlSize(.small)
-                    } else {
-                        Label("检查更新", systemImage: "arrow.triangle.2.circlepath")
-                    }
-                }
-                .disabled(updater.checking)
-
-                if updater.upToDate {
-                    Text("已是最新版本").font(.caption).foregroundStyle(.secondary)
-                }
-                if let err = updater.errorMessage {
-                    Text(err).font(.caption).foregroundStyle(.red)
-                }
+            Button {
+                appUpdater.checkForUpdates()
+            } label: {
+                Label("检查更新", systemImage: "arrow.triangle.2.circlepath")
             }
+            .disabled(!appUpdater.canCheck)
             .padding(.top, 6)
 
             Spacer()

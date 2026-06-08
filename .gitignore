@@ -12,3 +12,7 @@ xcuserdata/
 
 # 共享配置/调试产物（运行时生成，不入库）
 *.log
+
+# 发版产物
+build/
+dist/
