@@ -19,6 +19,9 @@ final class AppUpdater: ObservableObject {
     /// 自检始终可用（保留该属性以兼容现有 UI 的 .disabled(!canCheck)）
     @Published var canCheck = true
 
+    /// 检测到的可用新版本（nil 表示已是最新）；状态栏据此显示「发现新版」入口
+    @Published var available: UpdateInfo?
+
     private var currentVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
@@ -46,10 +49,13 @@ final class AppUpdater: ObservableObject {
             let info = try JSONDecoder().decode(UpdateInfo.self, from: data)
 
             if Self.isNewer(info.version, than: currentVersion) {
-                presentUpdate(info)
-            } else if !silent {
-                presentAlert(title: "已是最新版本",
-                             message: "当前版本 v\(currentVersion) 已是最新。")
+                available = info   // 有新版：只在状态栏呈现入口，不弹窗
+            } else {
+                available = nil
+                if !silent {
+                    presentAlert(title: "已是最新版本",
+                                 message: "当前版本 v\(currentVersion) 已是最新。")
+                }
             }
         } catch {
             if !silent {
@@ -59,19 +65,10 @@ final class AppUpdater: ObservableObject {
         }
     }
 
-    private func presentUpdate(_ info: UpdateInfo) {
-        let alert = NSAlert()
-        alert.messageText = "发现新版本 v\(info.version)"
-        let notes = info.notes ?? ""
-        alert.informativeText = notes.isEmpty
-            ? "当前版本 v\(currentVersion)，点击前往下载页面。"
-            : notes
-        alert.addButton(withTitle: "前往下载")
-        alert.addButton(withTitle: "稍后")
-        if alert.runModal() == .alertFirstButtonReturn,
-           let url = URL(string: info.url) {
-            NSWorkspace.shared.open(url)
-        }
+    /// 打开当前可用新版的下载页面
+    func openDownloadPage() {
+        guard let info = available, let url = URL(string: info.url) else { return }
+        NSWorkspace.shared.open(url)
     }
 
     private func presentAlert(title: String, message: String) {
@@ -95,7 +92,7 @@ final class AppUpdater: ObservableObject {
     }
 }
 
-private struct UpdateInfo: Decodable {
+struct UpdateInfo: Decodable {
     let version: String   // 如 "1.1"
     let url: String       // 下载页地址（GitHub release）
     let notes: String?    // 可选更新说明

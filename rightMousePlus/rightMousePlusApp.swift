@@ -64,6 +64,11 @@ struct MenuBarContent: View {
 
     var body: some View {
         Button("打开 RightPlus") { showMain() }
+        if let info = appUpdater.available {
+            Button("发现新版本 v\(info.version) —— 前往下载") {
+                appUpdater.openDownloadPage()
+            }
+        }
         Button("检查更新…") { appUpdater.checkForUpdates() }
             .disabled(!appUpdater.canCheck)
         Divider()

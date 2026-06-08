@@ -39,8 +39,9 @@ struct NewFileSettingsView: View {
 
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    ForEach(Array(zip(config.templates.indices, config.templates)), id: \.1.id) { index, t in
-                        TemplateRow(template: $config.templates[index], onDelete: {
+                    ForEach($config.templates) { $t in
+                        let index = config.templates.firstIndex { $0.id == t.id } ?? 0
+                        TemplateRow(template: $t, onDelete: {
                             config.templates.removeAll { $0.id == t.id }
                         })
                         .padding(.horizontal, Col.hPad)
@@ -71,7 +72,7 @@ struct NewFileSettingsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onChange(of: config) { newValue in ConfigStore.save(newValue) }
         .onAppear {
-            seedWPSTemplates()
+            seedBuiltinTemplates()
             if let url = SharedStore.configURL, !FileManager.default.fileExists(atPath: url.path) {
                 ConfigStore.save(config)
             }
@@ -110,15 +111,16 @@ struct NewFileSettingsView: View {
         .toggleStyle(.checkbox)
     }
 
-    /// 从已安装的 WPS 拷贝官方空白模板到共享容器（缺失才拷，幂等）
-    private func seedWPSTemplates() {
+    /// 把 App 内置的空白 Office 模板拷到共享容器（缺失才拷，幂等）
+    private func seedBuiltinTemplates() {
         guard let dir = SharedStore.templatesDir else { return }
-        let wpsBase = "/Applications/wpsoffice.app/Contents/Resources/office6/mui/default/templates"
         let fm = FileManager.default
-        for file in ["newfile.wps", "newfile.et", "newfile.dps"] {
+        for file in ["newfile.docx", "newfile.xlsx", "newfile.pptx", "newfile.pdf"] {
             let dest = dir.appendingPathComponent(file)
-            let src = URL(fileURLWithPath: "\(wpsBase)/\(file)")
-            if !fm.fileExists(atPath: dest.path), fm.fileExists(atPath: src.path) {
+            guard !fm.fileExists(atPath: dest.path) else { continue }
+            let base = (file as NSString).deletingPathExtension
+            let ext = (file as NSString).pathExtension
+            if let src = Bundle.main.url(forResource: base, withExtension: ext) {
                 try? fm.copyItem(at: src, to: dest)
             }
         }

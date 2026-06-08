@@ -122,10 +122,15 @@ struct SuperMouseConfig: Codable, Equatable {
         FileTemplate(name: "JSON", suffix: "json", builtin: true),
         FileTemplate(name: "CSV", suffix: "csv", builtin: true),
         FileTemplate(name: "Shell 脚本", suffix: "sh", builtin: true),
-        FileTemplate(name: "WPS 文字", suffix: "wps", templateFile: "newfile.wps", builtin: true),
-        FileTemplate(name: "WPS 表格", suffix: "et", templateFile: "newfile.et", builtin: true),
-        FileTemplate(name: "WPS 演示", suffix: "dps", templateFile: "newfile.dps", builtin: true),
+        FileTemplate(name: "Word 文档", suffix: "docx", templateFile: "newfile.docx", builtin: true),
+        FileTemplate(name: "Excel 工作簿", suffix: "xlsx", templateFile: "newfile.xlsx", builtin: true),
+        FileTemplate(name: "PPT 演示文稿", suffix: "pptx", templateFile: "newfile.pptx", builtin: true),
+        FileTemplate(name: "PDF 文档", suffix: "pdf", templateFile: "newfile.pdf", builtin: true),
     ])
+
+    /// 内置 Office 模板的后缀集合（用于旧配置迁移）
+    static let builtinOfficeSuffixes = ["docx", "xlsx", "pptx", "pdf"]
+    static let legacyWPSSuffixes = ["wps", "et", "dps"]
 }
 
 // MARK: - 共享存储路径
@@ -176,6 +181,15 @@ enum ConfigStore {
         let defaultKeys = Set(SuperMouseConfig.default.templates.map { "\($0.name)|\($0.suffix)" })
         for i in cfg.templates.indices where defaultKeys.contains("\(cfg.templates[i].name)|\(cfg.templates[i].suffix)") {
             cfg.templates[i].builtin = true
+        }
+        // 迁移：移除旧的内置 WPS 类型，补齐新的内置 Office 类型（docx/xlsx/pptx/pdf）
+        cfg.templates.removeAll {
+            $0.builtin && SuperMouseConfig.legacyWPSSuffixes.contains($0.suffix.lowercased())
+        }
+        let existing = Set(cfg.templates.map { $0.suffix.lowercased() })
+        for t in SuperMouseConfig.default.templates
+        where t.builtin && SuperMouseConfig.builtinOfficeSuffixes.contains(t.suffix) && !existing.contains(t.suffix) {
+            cfg.templates.append(t)
         }
         return cfg
     }
