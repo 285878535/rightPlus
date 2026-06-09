@@ -22,7 +22,7 @@ class FinderSync: FIFinderSync {
         refreshConfigIfNeeded(force: true)
     }
 
-    /// 仅在配置文件变更时重新读盘并重建图标缓存；否则用内存缓存（stat 很快）
+    /// 仅在配置文件变更时重新读盘并清空内存图标缓存；图标按需懒加载（见 icon(for:)），不阻塞启动
     private func refreshConfigIfNeeded(force: Bool = false) {
         let mtime = SharedStore.configURL.flatMap {
             try? FileManager.default.attributesOfItem(atPath: $0.path)[.modificationDate] as? Date
@@ -31,19 +31,44 @@ class FinderSync: FIFinderSync {
         cachedConfig = ConfigStore.load()
         configMTime = mtime
         iconCache.removeAll(keepingCapacity: true)
-        for t in cachedConfig.templates where !t.suffix.isEmpty && iconCache[t.suffix] == nil {
-            let img = t.icon
-            img.size = NSSize(width: 16, height: 16)
-            iconCache[t.suffix] = img
-        }
     }
 
+    /// 取模板图标：内存缓存 → 磁盘缓存（跨进程复用）→ 现算系统图标并预栅格化落盘
     private func icon(for t: FileTemplate) -> NSImage? {
-        if let cached = iconCache[t.suffix] { return cached }
-        let img = t.icon
-        img.size = NSSize(width: 16, height: 16)
-        iconCache[t.suffix] = img
+        let key = t.suffix.isEmpty ? "_plain" : t.suffix.lowercased()
+        if let cached = iconCache[key] { return cached }
+
+        let diskURL = SharedStore.iconCacheDir?.appendingPathComponent("\(key).png")
+        if let diskURL, let img = NSImage(contentsOf: diskURL) {
+            img.size = NSSize(width: 16, height: 16)
+            iconCache[key] = img
+            return img
+        }
+
+        // 把系统图标（含多分辨率大图）预渲染成 16pt@2x 单一位图：冷启动只算一次、菜单绘制也更快
+        let rep = rasterize(t.icon)
+        let img = NSImage(size: NSSize(width: 16, height: 16))
+        img.addRepresentation(rep)
+        iconCache[key] = img
+        if let diskURL, let png = rep.representation(using: .png, properties: [:]) {
+            try? png.write(to: diskURL)
+        }
         return img
+    }
+
+    /// 将任意 NSImage 渲染为 32×32 像素（16pt@2x，覆盖 Retina）的位图
+    private func rasterize(_ source: NSImage) -> NSBitmapImageRep {
+        let px = 32
+        let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: px, pixelsHigh: px,
+                                   bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+                                   isPlanar: false, colorSpaceName: .deviceRGB,
+                                   bytesPerRow: 0, bitsPerPixel: 0)!
+        rep.size = NSSize(width: 16, height: 16)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+        source.draw(in: NSRect(x: 0, y: 0, width: 16, height: 16))
+        NSGraphicsContext.restoreGraphicsState()
+        return rep
     }
 
     // MARK: - 菜单
@@ -160,7 +185,11 @@ class FinderSync: FIFinderSync {
         return cb
     }
 
-    private func hasClipboard() -> Bool { loadClipboard() != nil }
+    // 仅判断剪贴板文件是否存在——saveClipboard 只在书签非空时写入、cut→paste 后清除，
+    // 因此「存在」即「有效」，省去每次右键的读盘 + JSON 解码
+    private func hasClipboard() -> Bool {
+        FileManager.default.fileExists(atPath: clipboardURL.path)
+    }
 
     private func clearClipboard() {
         try? FileManager.default.removeItem(at: clipboardURL)

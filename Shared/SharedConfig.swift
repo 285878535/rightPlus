@@ -167,6 +167,13 @@ enum SharedStore {
         try? FileManager.default.createDirectory(at: d, withIntermediateDirectories: true)
         return d
     }
+
+    /// 图标磁盘缓存目录（预栅格化的 16pt 系统图标，跨进程复用，避免冷启动重算 LaunchServices 图标）
+    static var iconCacheDir: URL? {
+        let d = baseDir.appendingPathComponent("IconCache", isDirectory: true)
+        try? FileManager.default.createDirectory(at: d, withIntermediateDirectories: true)
+        return d
+    }
 }
 
 // MARK: - 读写
