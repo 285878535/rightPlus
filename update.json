@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "url": "https://github.com/285878535/rightPlus/releases/latest",
-  "notes": ""
+  "notes": "优化右键菜单加载速度：图标缓存落盘并预渲染，旧设备冷启动更快。"
 }
