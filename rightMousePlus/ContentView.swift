@@ -64,7 +64,6 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(minWidth: 780, minHeight: 560)
-        .onOpenURL { AirDropService.handle($0) }
         .onAppear {
             if !didOnboard { showOnboarding = true }
         }

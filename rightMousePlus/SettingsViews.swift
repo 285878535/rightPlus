@@ -246,7 +246,6 @@ private struct AddTypeSheet: View {
 // MARK: - 通用设置（扩展启用引导）
 
 struct GeneralSettingsView: View {
-    @AppStorage("hideDock") private var hideDock = false
     @State private var config = ConfigStore.load()
 
     var body: some View {
@@ -289,20 +288,6 @@ struct GeneralSettingsView: View {
                             .help("启用后菜单未出现时可重启访达")
                     }
                     .padding(.top, 4)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(6)
-            }
-
-            GroupBox {
-                VStack(alignment: .leading, spacing: 8) {
-                    Label("外观", systemImage: "menubar.rectangle").font(.headline)
-                    Toggle("在 Dock 中隐藏（仅状态栏显示）", isOn: $hideDock)
-                        .onChange(of: hideDock) { hide in
-                            AppDelegate.applyDockPolicy(hide: hide)
-                        }
-                    Text("开启后 Dock 不显示图标，可从右上角状态栏菜单打开本窗口。")
-                        .font(.caption).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(6)

@@ -17,6 +17,7 @@ struct rightMousePlusApp: App {
         }
         .defaultSize(width: 860, height: 600)
         .windowResizability(.contentMinSize)
+        .handlesExternalEvents(matching: [])
 
         MenuBarExtra("RightPlus", systemImage: "cursorarrow.click.2") {
             MenuBarContent()
@@ -25,20 +26,19 @@ struct rightMousePlusApp: App {
     }
 }
 
-// MARK: - AppDelegate：Dock 显隐 + 关窗后驻留状态栏
+// MARK: - AppDelegate：关窗后驻留状态栏
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        AppDelegate.applyDockPolicy(hide: UserDefaults.standard.bool(forKey: "hideDock"))
+    // 接收 rightplus:// URL —— 放在 AppDelegate 层处理，避免触发主窗口显示
+    func application(_ application: NSApplication, open urls: [URL]) {
+        urls.forEach { AirDropService.handle($0) }
     }
 
     // 关闭窗口后不退出，继续驻留状态栏
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
-    static func applyDockPolicy(hide: Bool) {
-        NSApp.setActivationPolicy(hide ? .accessory : .regular)
-        if !hide { NSApp.activate(ignoringOtherApps: true) }
-    }
+    // URL 唤起只执行对应操作，不自动重新打开已关闭的主窗口
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool { false }
 }
 
 // MARK: - 隔空投送（由扩展通过 rightplus://airdrop 唤起）
